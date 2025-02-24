@@ -5,32 +5,32 @@ import org.reactivestreams.Subscription;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SubscriberImpl implements Subscriber<String> {
+public class SubscriberImpl<T> implements Subscriber<T> {
 
     private static final Logger log = LoggerFactory.getLogger(SubscriberImpl.class);
-    private Subscription subscription;
+    private final String name;
 
-    public Subscription getSubscription() {
-        return subscription;
+    public SubscriberImpl(String name) {
+        this.name = name;
     }
 
     @Override
     public void onSubscribe(Subscription subscription) {
-        this.subscription = subscription;
+        subscription.request(Long.MAX_VALUE);
     }
 
     @Override
-    public void onNext(String email) {
-        log.info("received : {}", email);
+    public void onNext(T item) {
+        log.info("{} received : {}", this.name, item);
     }
 
     @Override
     public void onError(Throwable throwable) {
-        log.error("error", throwable);
+        log.error("{} error", this.name, throwable);
     }
 
     @Override
     public void onComplete() {
-        log.info("completed");
+        log.info("{} completed", this.name);
     }
 }
